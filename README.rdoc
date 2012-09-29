@@ -1,0 +1,3 @@
+== billsplit
+
+A gem that splits your bills! Nice for shopping with roommates.
