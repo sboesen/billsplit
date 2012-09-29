@@ -46,11 +46,23 @@ end
 
 lineitems.each do |lineitem, price|
   puts lineitem
-  puts "Who wants " + lineitem.red.bold + "? " + optionText
+  puts "Who wants " + lineitem.red.bold + "? " + optionText 
+
+  currentItem = LineItem.new
+  currentItem.name = lineitem
+  currentItem.price = price
+
+  lineItemPeople = ask( "Enter numbers (or a blank line to quit):", lambda { |ans| ans =~ /^-?\d+$/ ? Integer(ans) : ans} ) do |q|
+    q.gather = ""
+  end
+
+  currentItem.people = lineItemPeople
+  bill.lineitems.push currentItem
 end
 
-# Loop adding line items and associating people with them
+p bill.lineitems
 
-# lineitems = LineItem.new({'Butter' => 3.19, 'Lucerne Yogurt' => })
+
+
 
 # Print bill using ljust and paint

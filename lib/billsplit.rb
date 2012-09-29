@@ -5,11 +5,12 @@ class Bill
   # Has LineItems
   # Maps LineItems to People
 
-  attr_accessor :lineitems, :people
-end
-
-class Person
+  attr_accessor :lineitems
+  def initialize
+    self.lineitems = []
+  end
 end
 
 class LineItem
+  attr_accessor :name, :price, :people
 end
