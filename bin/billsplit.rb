@@ -3,6 +3,7 @@ $:.unshift(File.join(File.dirname(__FILE__), "/../lib"))
 require 'billsplit'
 require 'highline/import'
 require 'colored'
+require 'money'
 
 bill = Bill.new
 
@@ -28,7 +29,7 @@ while true do
   
   break if price == ""
 
-  lineitems.push [lineitem, price]
+  lineitems.push [lineitem, Money.new(price.to_f*100, "USD")]
 end
 
 # Set option text to be like
@@ -60,9 +61,44 @@ lineitems.each do |lineitem, price|
   bill.lineitems.push currentItem
 end
 
-p bill.lineitems
-
-
-
-
 # Print bill using ljust and paint
+puts "Item                    Price"
+puts "----                    -----"
+bill.lineitems.each do |lineitem|
+  i = 0
+  people_string = ""
+  people.each do |person|
+    if lineitem.people.include? i
+      #this person needs to pay for this
+      people_string += person.rjust(16).white
+      people_string += ": $" + (lineitem.price / lineitem.people.size).to_s.ljust(6)
+    else
+      people_string += person.rjust(16).white
+      people_string += ": $" + "0.00".ljust(6)
+    end
+    i += 1
+  end
+  puts lineitem.name.ljust(24) + "$" + lineitem.price.to_s + people_string
+end
+
+# calculate totals
+
+totals = Hash.new(Money.new(0, "USD"))
+bill.lineitems.each do |lineitem|
+  i = 0
+  people.each do |person|
+    if lineitem.people.include? i
+      totals[i] += (lineitem.price / lineitem.people.size)
+    end
+    i += 1
+  end
+end
+
+# print totals
+puts "\nTotals                        "
+puts "------------------------------"
+# 30 chars then start printing
+totals.each do |person, total|
+  puts "#{people[person]}: #{total}"
+end
+
